@@ -1,0 +1,18 @@
+# Node.js
+node_modules/
+.env
+npm-debug.log
+yarn-error.log
+.vscode/
+
+# Vite & Build
+client/dist/
+client/.vite/
+
+# Express & Logs
+server/logs/
+server/.env
+server/.cache/
+
+# Mac
+.DS_Store
