@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { Input, Button } from '@heroui/react'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
+import { login } from '../services/authService.js'
 
 const Login = () => {
     const navigate = useNavigate();
@@ -12,33 +13,17 @@ const Login = () => {
     const [isLoading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
-
     const togglePasswordVisibility = () => setPasswordVisible(!isPasswordVisible);
 
     const handleLogin = async () => {
         setLoading(true);
 
-        try {
-            const response = await fetch(`${BASE_API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            })
+        const data = await login(email, password);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                setError(data.message);
-                throw new Error(data.message);
-            }
-
+        if (data.success) {
             navigate('/dashboard');
-
-        } catch (error) {
-            console.error(error);
+        } else {
+            setError(data.message);
         }
 
         setLoading(false);
