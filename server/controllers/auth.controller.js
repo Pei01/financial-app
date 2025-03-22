@@ -54,6 +54,11 @@ export const login = async (req, res, next) => {
 
         // Check if user exists
         if (!user) {
+            res.status(401).json({
+                success: false,
+                message: 'Invalid Authentication',
+            });
+
             const error = new Error('User not found');
             error.statusCode = 404;
             throw error;
@@ -63,6 +68,11 @@ export const login = async (req, res, next) => {
         const isPasswordValid =await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
+            res.status(401).json({
+                success: false,
+                message: 'Invalid Authentication',
+            });
+
             const error = new Error('Invalid password');
             error.statusCode = 401;
             throw error;
