@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+    @keyframes fade {
+        0%, 100% {
+            transform: translateY(-100px);
+            opacity: 0;
+        }
+        30% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        70% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .alert-fade {
+        animation: fade 2s ease-in-out;
+    }
+}
