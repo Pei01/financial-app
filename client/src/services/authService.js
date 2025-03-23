@@ -12,6 +12,10 @@ const login = async (email, password) => {
 
         const data = await response.json();
 
+        if (data.success) {
+            localStorage.setItem('token', data.data.token);
+        }
+
         return data;
     } catch (error) {
         console.error(error);
