@@ -22,4 +22,24 @@ const login = async (email, password) => {
     }
 }
 
-export { login };
+const verify = async () => {
+    try {
+        const token = localStorage.getItem('token');
+
+        const response = await fetch(`${BASE_API_URL}/auth/verify`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            }
+        });
+
+        const data = await response.json();
+        const isValid = data.success;
+
+        return isValid;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export { login, verify };
