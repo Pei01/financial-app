@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Outlet, Navigate } from 'react-router'
 import { verify } from '../services/authService';
+import Layout from './Layout.jsx';
 
 const ProtectedRoute = () => {
     const [isTokenValid, setIsTokenValid] = useState(false);
@@ -18,10 +19,10 @@ const ProtectedRoute = () => {
     }, [])
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <div className='w-screen h-dvh bg-neutral-950'></div>;
     }
 
-    return isTokenValid ? <Outlet /> : <Navigate to='/login' replace />;
+    return isTokenValid ? <Layout /> : <Navigate to='/login' replace />;
 }
 
 export default ProtectedRoute
