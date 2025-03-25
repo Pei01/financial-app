@@ -39,4 +39,21 @@ const fetchInvestments = async () => {
     }
 }
 
-export { createInvestment, fetchInvestments };
+const deleteInvestment = async (investmentId) => {
+    try {
+        const response = await fetch(`${BASE_API_URL}/investments/${investmentId}`, {
+            method: HTTP_METHODS.DELETE,
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export { createInvestment, fetchInvestments, deleteInvestment };

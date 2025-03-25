@@ -1,7 +1,12 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, Chip } from '@heroui/react'
+import React, { useCallback, useMemo, useState } from 'react';
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, Chip, Alert } from '@heroui/react';
+import { RiDeleteBinLine } from 'react-icons/ri';
+import { deleteInvestment } from '../services/investmentService.js';
 
-const InvestmentLogTable = ({ investments }) => {
+
+const InvestmentLogTable = ({ investments, setIsInvestmentChanged }) => {
+    const [alert, setAlert] = useState({ message: '', color: 'default', isVisible: false });
+
     const columns = [
         { key: 'assetType', label: 'Asset Type' },
         { key: 'symbol', label: 'Symbol' },
@@ -9,6 +14,7 @@ const InvestmentLogTable = ({ investments }) => {
         { key: 'quantity', label: 'Quantity' },
         { key: 'price', label: 'Price' },
         { key: 'date', label: 'Date' },
+        { key: 'actions', label: 'Actions' },
     ]
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -22,6 +28,26 @@ const InvestmentLogTable = ({ investments }) => {
 
         return investments.slice(start, end);
     }, [currentPage, investments]);
+
+    const handleDeleteInvestment = async (investmentId) => {
+        const alertDisplayTime = 2000;
+        const response = await deleteInvestment(investmentId);
+
+        if (response.success) {
+            setIsInvestmentChanged(true);
+            setAlert({ message: 'Investment deleted successfully', color: 'success', isVisible: true });
+
+            setTimeout(() => {
+                setAlert({ ...alert, isVisible: false });
+            }, alertDisplayTime);
+        } else {
+            setAlert({ message: response.message, color: 'danger', isVisible: true });
+
+            setTimeout(() => {
+                setAlert({ ...alert, isVisible: false });
+            }, alertDisplayTime);
+        }
+    }
 
     const renderCell = useCallback((item, columnKey) => {
         const cellValue = item[columnKey];
@@ -47,49 +73,66 @@ const InvestmentLogTable = ({ investments }) => {
                 return cellValue;
             case 'date':
                 return cellValue;
+            case 'actions':
+                return (
+                    <div className='flex justify-center'>
+                        <button onClick={() => handleDeleteInvestment(item._id)}>
+                            <RiDeleteBinLine className='size-4 text-danger cursor-pointer hover:text-red-800' />
+                        </button>
+                    </div>
+                );
             default:
                 return cellValue;
         }
     }, []);
 
     return (
-            <Table 
-                aria-label='Investment Logs'
-                selectionMode='single'
-                bottomContent={
-                    <div className='flex justify-center'>
-                        <Pagination 
-                            isCompact
-                            showControls
-                            page={currentPage}
-                            total={totalPages}
-                            onChange={setCurrentPage}
-                        />
-                    </div>
-                }
-            >
-                <TableHeader columns={columns}>
-                    {(column) => (
-                        <TableColumn 
-                            key={column.key} 
-                            className='text-center uppercase'
-                            allowsSorting={column.sortable}
-                        >
-                            {column.label}
-                        </TableColumn>
-                    )}
-                </TableHeader>
+            <>
+                <div className={`w-1/2 absolute top-6 z-[100] ${alert.isVisible ? 'alert-fade' : 'hidden'}`}>
+                    <Alert 
+                        description={alert.message} 
+                        color={alert.color}
+                    />
+                </div>
 
-                <TableBody items={items} emptyContent='No Investment Logs'>
-                    {(item) => (
-                        <TableRow key={item._id}>
-                            {(columnKey) => (
-                                <TableCell className='text-white text-center'>{renderCell(item, columnKey)}</TableCell>
-                            )}
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+                <Table 
+                    aria-label='Investment Logs'
+                    selectionMode='single'
+                    bottomContent={
+                        <div className='flex justify-center'>
+                            <Pagination 
+                                isCompact
+                                showControls
+                                page={currentPage}
+                                total={totalPages}
+                                onChange={setCurrentPage}
+                            />
+                        </div>
+                    }
+                >
+                    <TableHeader columns={columns}>
+                        {(column) => (
+                            <TableColumn 
+                                key={column.key} 
+                                className='text-center uppercase'
+                                allowsSorting={column.sortable}
+                            >
+                                {column.label}
+                            </TableColumn>
+                        )}
+                    </TableHeader>
+
+                    <TableBody items={items} emptyContent='No Investment Logs'>
+                        {(item) => (
+                            <TableRow key={item._id}>
+                                {(columnKey) => (
+                                    <TableCell className='text-white text-center'>{renderCell(item, columnKey)}</TableCell>
+                                )}
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </>
     )
 }
 

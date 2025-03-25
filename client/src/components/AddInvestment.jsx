@@ -5,7 +5,7 @@ import { createInvestment } from '../services/investmentService.js'
 import { ASSET_TYPES, TRADE_TYPES } from '../config/constants.js'
 
 
-const AddInvestment = ({ setIsAddedNewInvestment}) => {
+const AddInvestment = ({ setIsInvestmentChanged}) => {
     const [alert, setAlert] = useState({ message: '', color: 'default', isVisible: false});
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -45,7 +45,7 @@ const AddInvestment = ({ setIsAddedNewInvestment}) => {
         if (data.success) {
             setAlert({ message: 'Investment added successfully', color: 'success', isVisible: true });
 
-            setIsAddedNewInvestment(true);
+            setIsInvestmentChanged(true);
             
             setTimeout(() => {
                 setAlert({ ...alert, isVisible: false });

@@ -50,14 +50,49 @@ export const getInvestments = async (req, res, next) => {
     }
 }
 
+export const deleteInvestment = async (req, res, next) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const investmentId = req.params.id;
+        const user = req.user;
+
+        const deletedInvestment = await Investment.findByIdAndDelete(investmentId);
+
+        if (!deletedInvestment) {
+            res.status(404).json({
+                success: false,
+                message: 'Investment not found',
+            });
+        }
+
+        await User.updateOne({ _id: user._id }, { $pull: { investments: investmentId } }, { session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(200).json({
+            success: true,
+            message: 'Investment deleted successfully',
+            data: deletedInvestment,
+        });
+        
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+
+        await session.abortTransaction();
+        session.endSession();
+    }
+}
+
 export const getInvestment = async (req, res, next) => {
 
 }
 
 export const updateInvestment = async (req, res, next) => {
-
-}
-
-export const deleteInvestment = async (req, res, next) => {
 
 }
