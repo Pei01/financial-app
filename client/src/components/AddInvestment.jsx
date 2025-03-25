@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, DatePicker, Autocomplete, AutocompleteItem, Input, Alert } from '@heroui/react'
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, DatePicker, Input, Alert, Select, SelectItem, RadioGroup, Radio } from '@heroui/react'
 import { parseDate } from '@internationalized/date'
 import { createInvestment } from '../services/investmentService.js'
 import { ASSET_TYPES, TRADE_TYPES } from '../config/constants.js'
 
 
-const AddInvestment = () => {
+const AddInvestment = ({ setIsAddedNewInvestment}) => {
     const [alert, setAlert] = useState({ message: '', color: 'default', isVisible: false});
 
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -44,6 +44,8 @@ const AddInvestment = () => {
 
         if (data.success) {
             setAlert({ message: 'Investment added successfully', color: 'success', isVisible: true });
+
+            setIsAddedNewInvestment(true);
             
             setTimeout(() => {
                 setAlert({ ...alert, isVisible: false });
@@ -59,8 +61,6 @@ const AddInvestment = () => {
             }
             , alertDisplayTime);
         }
-
-        console.log(data);
     }
 
     const handleCancelInvestment = (onClose) => {
@@ -98,19 +98,18 @@ const AddInvestment = () => {
                                 <ModalHeader>Add Investment</ModalHeader>
                                 <ModalBody>
                                     <div className='grid grid-cols-2 gap-4'>
-                                        <Autocomplete 
-                                            label='Asset Type' 
+                                        <Select
+                                            label='Asset Type'
                                             placeholder='Select asset type'
-                                            defaultItems={assetTypes}
-                                            value={investment.assetType}
-                                            onSelectionChange={(value) => setInvestment({ ...investment, assetType: value })}
+                                            selectedKeys={[investment.assetType]}
+                                            onChange={(e) => setInvestment({ ...investment, assetType: e.target.value })}
                                         >
-                                            {(item) => (
-                                                <AutocompleteItem key={item.key}>
-                                                    {item.label}
-                                                </AutocompleteItem>
-                                            )}
-                                        </Autocomplete>
+                                            {assetTypes.map((assetType) => (
+                                                <SelectItem key={assetType.key}>
+                                                    {assetType.label}
+                                                </SelectItem>
+                                            ))}
+                                        </Select>
 
                                         <Input
                                             label='Symbol'
@@ -157,18 +156,17 @@ const AddInvestment = () => {
                                         />
                                     </div>
 
-                                    <Autocomplete 
-                                        label='Trade Type' 
-                                        placeholder='Select trade type'
+                                    <RadioGroup 
+                                        orientation='horizontal'
                                         value={investment.tradeType}
-                                        onSelectionChange={(value) => setInvestment({ ...investment, tradeType: value })}
+                                        onValueChange={(value) => setInvestment({ ...investment, tradeType: value })}
                                     >
                                         {tradeTypes.map((tradeType) => (
-                                            <AutocompleteItem key={tradeType.key} value={tradeType.key}>
+                                            <Radio key={tradeType.key} value={tradeType.key}>
                                                 {tradeType.label}
-                                            </AutocompleteItem>
+                                            </Radio>
                                         ))}
-                                    </Autocomplete>
+                                    </RadioGroup>
 
                                     <DatePicker 
                                         value={investment.date}

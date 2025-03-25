@@ -1,9 +1,11 @@
+import { HTTP_METHODS } from "../config/constants";
+
 const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
 
 const login = async (email, password) => {
     try {
         const response = await fetch(`${BASE_API_URL}/auth/login`, {
-            method: 'POST',
+            method: HTTP_METHODS.POST,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -27,7 +29,7 @@ const verify = async () => {
         const token = localStorage.getItem('token');
 
         const response = await fetch(`${BASE_API_URL}/auth/verify`, {
-            method: 'GET',
+            method: HTTP_METHODS.GET,
             headers: {
                 Authorization: `Bearer ${token}`,
             }

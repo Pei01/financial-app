@@ -31,7 +31,23 @@ export const createInvestment = async (req, res, next) => {
 }
 
 export const getInvestments = async (req, res, next) => {
+    try {
+        const userId = req.user._id;
+        const data = await User.findById(userId).populate('investments');
+        const investments = data.investments;
 
+        res.status(200).json({
+            success: true,
+            message: 'Investments retrieved successfully',
+            data: investments,
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 }
 
 export const getInvestment = async (req, res, next) => {

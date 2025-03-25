@@ -8,3 +8,10 @@ export const TRADE_TYPES = {
     BUY: { label: 'Buy', key: 'buy'},
     SELL: { label: 'Sell', key: 'sell'},
 }
+
+export const HTTP_METHODS = {
+    GET: 'GET',
+    POST: 'POST',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
+}

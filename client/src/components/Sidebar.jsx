@@ -36,9 +36,8 @@ const Sidebar = ({isSidebarOpen, toggleSidebar}) => {
                     <Avatar name='Pei'/>
 
                     {sidebarItems.map((item, index) => (
-                        <a className='rounded-xl' href={item.link}>
+                        <a key={index} className='rounded-xl' href={item.link}>
                             <Button 
-                                key={index}
                                 variant='light' 
                                 className='flex justify-start w-full'
                                 startContent={item.icon}
