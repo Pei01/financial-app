@@ -24,6 +24,29 @@ const login = async (email, password) => {
     }
 }
 
+const signup = async (name, email, password) => {
+    try {
+        const response = await fetch(`${BASE_API_URL}/auth/register`, {
+            method: HTTP_METHODS.POST,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, email, password }),
+        })
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.setItem('token', data.data.token);
+        }
+
+        return data;
+
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 const verify = async () => {
     try {
         const token = localStorage.getItem('token');
@@ -44,4 +67,4 @@ const verify = async () => {
     }
 }
 
-export { login, verify };
+export { login, signup, verify };
