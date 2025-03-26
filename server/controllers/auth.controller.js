@@ -14,9 +14,13 @@ export const register = async (req, res, next) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            const error = new Error('User already exists');
-            error.statusCode = 409;
-            throw error;
+            session.abortTransaction();
+            session.endSession();
+
+            return res.status(409).json({
+                success: false,
+                message: 'User already exists',
+            })
         }
 
         // Hash the password
@@ -42,6 +46,11 @@ export const register = async (req, res, next) => {
         await session.abortTransaction();
         session.endSession();
 
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+        });
+
         next(error);
     }
 }
@@ -54,28 +63,20 @@ export const login = async (req, res, next) => {
 
         // Check if user exists
         if (!user) {
-            res.status(401).json({
+            return res.status(401).json({
                 success: false,
                 message: 'Invalid Authentication',
             });
-
-            const error = new Error('User not found');
-            error.statusCode = 404;
-            throw error;
         }
 
         // Check if password is valid
         const isPasswordValid =await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            res.status(401).json({
+            return res.status(401).json({
                 success: false,
                 message: 'Invalid Authentication',
             });
-
-            const error = new Error('Invalid password');
-            error.statusCode = 401;
-            throw error;
         }
 
         const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
@@ -90,6 +91,11 @@ export const login = async (req, res, next) => {
         });
 
     } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+        });
+
         next(error);
     }
 }
