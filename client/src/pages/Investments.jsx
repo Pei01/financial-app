@@ -4,7 +4,7 @@ import AddInvestment from '../components/AddInvestment'
 import { fetchInvestments } from '../services/investmentService.js'
 
 const Investments = () => {
-    const [isInvestmentChanged, setIsInvestmentChanged] = useState(false);
+    const [isInvestmentChanged, setInvestmentChanged] = useState(false);
     const [investments, setInvestments] = useState([]);
 
     useEffect(() => {
@@ -25,16 +25,20 @@ const Investments = () => {
         }
 
         getInvestments();
-        setIsInvestmentChanged(false);
+        setInvestmentChanged(false);
 
     }, [isInvestmentChanged]);
 
     return (
         <div className='relative w-full h-dvh flex flex-col justify-center items-center bg-neutral-950'>
             <div className='w-10/12 flex flex-col justify-center items-center gap-6'>
-                <AddInvestment setIsInvestmentChanged={setIsInvestmentChanged} />
+                <AddInvestment setInvestmentChanged={setInvestmentChanged} />
 
-                <InvestmentLogTable investments={investments} setIsInvestmentChanged={setIsInvestmentChanged} />
+                <InvestmentLogTable 
+                    investments={investments} 
+                    isInvestmentChanged={isInvestmentChanged}
+                    setInvestmentChanged={setInvestmentChanged} 
+                />
             </div>
         </div>
     )

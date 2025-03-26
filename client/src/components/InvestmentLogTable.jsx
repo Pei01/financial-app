@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, Chip, Alert } from '@heroui/react';
+import { Table, TableHeader, TableBody, TableColumn, TableRow, TableCell, Pagination, Chip, Alert, Spinner } from '@heroui/react';
 import { RiDeleteBinLine } from 'react-icons/ri';
 import { deleteInvestment } from '../services/investmentService.js';
 
 
-const InvestmentLogTable = ({ investments, setIsInvestmentChanged }) => {
+const InvestmentLogTable = ({ investments, setInvestmentChanged }) => {
     const [alert, setAlert] = useState({ message: '', color: 'default', isVisible: false });
 
     const columns = [
@@ -29,12 +29,17 @@ const InvestmentLogTable = ({ investments, setIsInvestmentChanged }) => {
         return investments.slice(start, end);
     }, [currentPage, investments]);
 
+    const [isTableLoading, setTableLoading] = useState(false);
+
     const handleDeleteInvestment = async (investmentId) => {
+        setTableLoading(true);
         const alertDisplayTime = 2000;
         const response = await deleteInvestment(investmentId);
 
+        setTableLoading(false);
+
         if (response.success) {
-            setIsInvestmentChanged(true);
+            setInvestmentChanged(true);
             setAlert({ message: 'Investment deleted successfully', color: 'success', isVisible: true });
 
             setTimeout(() => {
@@ -122,7 +127,12 @@ const InvestmentLogTable = ({ investments, setIsInvestmentChanged }) => {
                         )}
                     </TableHeader>
 
-                    <TableBody items={items} emptyContent='No Investment Logs'>
+                    <TableBody 
+                        items={items} 
+                        emptyContent='No Investment Logs'
+                        isLoading={isTableLoading}
+                        loadingContent={<Spinner />}
+                    >
                         {(item) => (
                             <TableRow key={item._id}>
                                 {(columnKey) => (
