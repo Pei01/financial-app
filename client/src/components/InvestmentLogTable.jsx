@@ -100,48 +100,50 @@ const InvestmentLogTable = ({ investments, setInvestmentChanged }) => {
                     />
                 </div>
 
-                <Table 
-                    aria-label='Investment Logs'
-                    selectionMode='single'
-                    bottomContent={
-                        <div className='flex justify-center'>
-                            <Pagination 
-                                isCompact
-                                showControls
-                                page={currentPage}
-                                total={totalPages}
-                                onChange={setCurrentPage}
-                            />
-                        </div>
-                    }
-                >
-                    <TableHeader columns={columns}>
-                        {(column) => (
-                            <TableColumn 
-                                key={column.key} 
-                                className='text-center uppercase'
-                                allowsSorting={column.sortable}
-                            >
-                                {column.label}
-                            </TableColumn>
-                        )}
-                    </TableHeader>
-
-                    <TableBody 
-                        items={items} 
-                        emptyContent='No Investment Logs'
-                        isLoading={isTableLoading}
-                        loadingContent={<Spinner />}
+                <div className='w-full h-[580px] flex justify-start'>
+                    <Table 
+                        aria-label='Investment Logs'
+                        selectionMode='single'
+                        bottomContent={
+                            <div className='flex justify-center'>
+                                <Pagination 
+                                    isCompact
+                                    showControls
+                                    page={currentPage}
+                                    total={totalPages}
+                                    onChange={setCurrentPage}
+                                />
+                            </div>
+                        }
                     >
-                        {(item) => (
-                            <TableRow key={item._id}>
-                                {(columnKey) => (
-                                    <TableCell className='text-white text-center'>{renderCell(item, columnKey)}</TableCell>
-                                )}
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
+                        <TableHeader columns={columns}>
+                            {(column) => (
+                                <TableColumn 
+                                    key={column.key} 
+                                    className='text-center uppercase'
+                                    allowsSorting={column.sortable}
+                                >
+                                    {column.label}
+                                </TableColumn>
+                            )}
+                        </TableHeader>
+
+                        <TableBody 
+                            items={items} 
+                            emptyContent='No Investment Logs'
+                            isLoading={isTableLoading}
+                            loadingContent={<Spinner />}
+                        >
+                            {(item) => (
+                                <TableRow key={item._id}>
+                                    {(columnKey) => (
+                                        <TableCell className='text-white text-center'>{renderCell(item, columnKey)}</TableCell>
+                                    )}
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
             </>
     )
 }
