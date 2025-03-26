@@ -1,9 +1,10 @@
 import { HTTP_METHODS } from "../config/constants";
 
 const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
-const token = localStorage.getItem('token');
 
 const createInvestment = async (investment) => {
+    const token = localStorage.getItem('token');
+
     try {
         const response = await fetch(`${BASE_API_URL}/investments`, {
             method: HTTP_METHODS.POST,
@@ -23,6 +24,8 @@ const createInvestment = async (investment) => {
 }
 
 const fetchInvestments = async () => {
+    const token = localStorage.getItem('token');
+
     try {
         const response = await fetch(`${BASE_API_URL}/investments/`, {
             method: HTTP_METHODS.GET,
@@ -40,6 +43,8 @@ const fetchInvestments = async () => {
 }
 
 const deleteInvestment = async (investmentId) => {
+    const token = localStorage.getItem('token');
+
     try {
         const response = await fetch(`${BASE_API_URL}/investments/${investmentId}`, {
             method: HTTP_METHODS.DELETE,
