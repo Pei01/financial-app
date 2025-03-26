@@ -15,3 +15,8 @@ export const HTTP_METHODS = {
     PUT: 'PUT',
     DELETE: 'DELETE',
 }
+
+export const CURRENCIES = {
+    USD: { label: 'USD', value: 'USD'},
+    TWD: { label: 'TWD', value: 'TWD'},
+}

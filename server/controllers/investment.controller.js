@@ -1,16 +1,32 @@
 import mongoose from "mongoose";
 import Investment from "../models/investment.model.js";
 import User from "../models/user.model.js";
+import { getExchangeRate } from "../services/exchangeRateService.js";
 
 export const createInvestment = async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        const { assetType, symbol, tradeType, quantity, price, date } = req.body;
+        const { assetType, symbol, tradeType, quantity, price, currency, date } = req.body;
         const userId = req.user._id;
+        
+        const exchangeRate = await getExchangeRate(currency);
+        const convertedPrice = price * exchangeRate;
 
-        const newInvestments = await Investment.create([{ userId, assetType, symbol, tradeType, quantity, price, date }], { session });
+        const newInvestments = await Investment.create([{ 
+            userId, 
+            assetType, 
+            symbol, 
+            tradeType, 
+            quantity, 
+            price, 
+            currency, 
+            exchangeRate, 
+            convertedPrice, 
+            date 
+        }], { session });
+
         await User.updateOne({ _id: userId }, { $push: { investments: newInvestments[0]._id } }, { session });
 
         await session.commitTransaction();

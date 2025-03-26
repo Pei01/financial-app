@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, DatePicker, Input, Alert, Select, SelectItem, RadioGroup, Radio, Spinner } from '@heroui/react'
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, DatePicker, Input, Alert, Select, SelectItem, RadioGroup, Radio, Spinner, Tabs, Tab } from '@heroui/react'
 import { parseDate } from '@internationalized/date'
 import { createInvestment } from '../services/investmentService.js'
-import { ASSET_TYPES, TRADE_TYPES } from '../config/constants.js'
+import { ASSET_TYPES, TRADE_TYPES, CURRENCIES } from '../config/constants.js'
 
 
 const AddInvestment = ({ setInvestmentChanged}) => {
@@ -19,7 +19,8 @@ const AddInvestment = ({ setInvestmentChanged}) => {
         symbol: '',
         quantity: 0,
         price: 0,
-        tradeType: '',
+        currency: 'USD',
+        tradeType: 'buy',
         date: parseDate(new Date().toISOString().split('T')[0]),
     });
 
@@ -29,7 +30,7 @@ const AddInvestment = ({ setInvestmentChanged}) => {
             symbol: '',
             quantity: 0,
             price: 0,
-            tradeType: '',
+            tradeType: 'buy',
             date: parseDate(new Date().toISOString().split('T')[0]),
         });
     }
@@ -154,27 +155,41 @@ const AddInvestment = ({ setInvestmentChanged}) => {
                                                             className='outline-none border-0 bg-transparent text-default-500 text-small'
                                                             id='currency'
                                                             name='currency'
+                                                            onChange={(e) => setInvestment({...investment, currency: e.target.value})}
                                                         >
-                                                            <option value='usdt'>USDT</option>
-                                                            <option value='usd'>USD</option>
-                                                            <option value='twd'>TWD</option>
+                                                            <option value={CURRENCIES.USD.value}>
+                                                                {CURRENCIES.USD.label}
+                                                            </option>
+
+                                                            <option value={CURRENCIES.TWD.value}>
+                                                                {CURRENCIES.TWD.label}
+                                                            </option>
                                                         </select>
                                                     </div>
                                                 }
                                             />
                                         </div>
 
-                                        <RadioGroup 
-                                            orientation='horizontal'
-                                            value={investment.tradeType}
-                                            onValueChange={(value) => setInvestment({ ...investment, tradeType: value })}
-                                        >
-                                            {tradeTypes.map((tradeType) => (
-                                                <Radio key={tradeType.key} value={tradeType.key}>
-                                                    {tradeType.label}
-                                                </Radio>
-                                            ))}
-                                        </RadioGroup>
+                                        <div className='w-full'>
+                                            <Tabs 
+                                                fullWidth
+                                                selectedKey={investment.tradeType}
+                                                onSelectionChange={(value) => setInvestment({ ...investment, tradeType: value })}
+                                                color={investment.tradeType === 'buy' ? 'success' : 'danger'}
+                                                variant='bordered'
+                                            >
+                                                {tradeTypes.map((tradeType) => (
+                                                    <Tab 
+                                                        key={tradeType.key} 
+                                                        title={
+                                                            <span className={`${investment.tradeType === tradeType.key ? 'text-white' : 'text-default-500'}`}>
+                                                                {tradeType.label}
+                                                            </span>
+                                                        } 
+                                                    />
+                                                ))}
+                                            </Tabs>
+                                        </div>
 
                                         <DatePicker 
                                             aria-label='Date'

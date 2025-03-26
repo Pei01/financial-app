@@ -29,6 +29,19 @@ const investmentSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    currency: {
+        type: String,
+        enum: ['USD', 'TWD'],
+        required: true,
+    },
+    exchangeRate: {
+        type: Number,
+        required: true,
+    },
+    convertedPrice: {
+        type: Number,
+        required: true,
+    },
     date: {
         type: Date,
         required: true,
